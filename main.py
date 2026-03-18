@@ -29,11 +29,11 @@ def decimal_default(obj):
 def root():
     return {"message": "Smart Inventory Management API is running"}
 
-@app.get("/api/inventory")
-def get_inventory():
-    response = inventory_table.scan()
-    items = response.get("Items", [])
-    return json.loads(json.dumps(items, default=decimal_default))
+# @app.get("/api/inventory")
+# def get_inventory():
+#     response = inventory_table.scan()
+#     items = response.get("Items", [])
+#     return json.loads(json.dumps(items, default=decimal_default))
 
 @app.get("/api/inventory/{stock_code}")
 def get_inventory_by_product(stock_code: str):
