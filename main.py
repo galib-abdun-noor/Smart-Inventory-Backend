@@ -61,3 +61,30 @@ def get_transactions(stock_code: str):
     )
     items = response.get("Items", [])
     return json.loads(json.dumps(items, default=decimal_default))
+
+#for the dashboard summary endpoint
+@app.get("/api/dashboard/summary")
+def get_dashboard_summary():
+    try:
+        inventory_response = inventory_table.scan()
+        inventory_items = inventory_response.get("Items", [])
+
+        transactions_response = transactions_table.scan(Select="COUNT")
+        total_transactions = transactions_response.get("Count", 0)
+
+        total_products = len(inventory_items)
+        total_stock = sum(int(item.get("CurrentStock", 0)) for item in inventory_items)
+
+        unique_warehouses = len(set(
+            item.get("WarehouseID", "") for item in inventory_items if item.get("WarehouseID")
+        ))
+
+        return {
+            "totalProducts": total_products,
+            "totalStock": total_stock,
+            "uniqueWarehouses": unique_warehouses,
+            "totalTransactions": total_transactions
+        }
+
+    except Exception as e:
+        return {"error": str(e)}
