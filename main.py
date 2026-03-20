@@ -88,3 +88,29 @@ def get_dashboard_summary():
 
     except Exception as e:
         return {"error": str(e)}
+    
+    #for transaction trend chart
+@app.get("/api/dashboard/transaction-trend")
+def get_transaction_trend():
+    try:
+        response = transactions_table.scan()
+        items = response.get("Items", [])
+
+        trend_map = {}
+
+        for item in items:
+            invoice_date = item.get("InvoiceDate", "")
+            if invoice_date:
+                period = invoice_date[:7]  # YYYY-MM
+                trend_map[period] = trend_map.get(period, 0) + 1
+
+        trend_data = [
+            {"period": period, "count": count}
+            for period, count in sorted(trend_map.items())
+        ]
+
+        return trend_data
+
+    except Exception as e:
+        return {"error": str(e)}
+             
