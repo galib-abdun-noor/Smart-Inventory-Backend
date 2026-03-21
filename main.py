@@ -1,9 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import boto3
 from boto3.dynamodb.conditions import Key
 from decimal import Decimal
 import json
+from pydantic import BaseModel
 
 app = FastAPI(title="Smart Inventory Management API")
 
@@ -24,6 +25,12 @@ def decimal_default(obj):
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError
+
+#For Login and Access Controls
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
 
 @app.get("/")
 def root():
@@ -156,3 +163,23 @@ def get_top_products():
 
     except Exception as e:
         return {"error": str(e)}
+    
+#For login and access control (basic implementation)
+@app.post("/api/login")
+def login(request: LoginRequest):
+    demo_user = {
+        "admin":{"password": "@dminHi12!", "role":"admin"},
+        "manager":{"password":"M@nager34^","role":"manager"},
+        "viewer":{"password":"V!ewer$67","role":"viewer"}
+    }
+
+    user = demo_user.get(request.username)
+
+    if not user or user["password"] != request.password:
+        raise HTTPException(status_code=401, detail = "Invalid username or password")
+    
+    return{
+        "message":"Login Successful",
+        "username":request.username,
+        "role":user["role"]
+    }
