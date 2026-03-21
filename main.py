@@ -113,4 +113,46 @@ def get_transaction_trend():
 
     except Exception as e:
         return {"error": str(e)}
-             
+
+
+#for top products
+@app.get("/api/dashboard/top-products")
+def get_top_products():
+    try:
+        response = transactions_table.scan()
+        items = response.get("Items", [])
+
+        product_map = {}
+
+        for item in items:
+            stock_code = item.get("StockCode")
+            description = item.get("Description", "Unknown")
+            quantity = int(item.get("Quantity", 0))
+
+            if stock_code not in product_map:
+                product_map[stock_code] = {
+                    "description": description,
+                    "totalQuantity": 0
+                }
+
+            product_map[stock_code]["totalQuantity"] += quantity
+
+        sorted_products = sorted(
+            product_map.items(),
+            key=lambda x: x[1]["totalQuantity"],
+            reverse=True
+        )[:5]
+
+        result = [
+            {
+                "StockCode": stock_code,
+                "Description": data["description"],
+                "totalQuantity": data["totalQuantity"]
+            }
+            for stock_code, data in sorted_products
+        ]
+
+        return result
+
+    except Exception as e:
+        return {"error": str(e)}
