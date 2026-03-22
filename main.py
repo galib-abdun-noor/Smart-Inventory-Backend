@@ -5,6 +5,9 @@ from boto3.dynamodb.conditions import Key
 from decimal import Decimal
 import json
 from pydantic import BaseModel
+import joblib
+import pandas as pd
+from datetime import datetime
 
 app = FastAPI(title="Smart Inventory Management API")
 
@@ -182,4 +185,95 @@ def login(request: LoginRequest):
         "message":"Login Successful",
         "username":request.username,
         "role":user["role"]
+    }
+
+#Loading ML models
+model = joblib.load("demand_forecast_model.pkl")
+encoder = joblib.load("stockcode_encoder.pkl")
+
+# Helper function for prediction
+def predict_demand(stock_code: str, current_stock: int):
+    try:
+        stock_code_encoded = encoder.transform([stock_code])[0]
+    except Exception:
+        raise HTTPException(status_code=404, detail="StockCode not found in model encoder")
+
+    now = datetime.now()
+
+    # Simple placeholder lag values
+    lag1 = current_stock
+    lag7 = current_stock
+    rolling7mean = current_stock
+
+    features = pd.DataFrame([{
+        "StockCodeEncoded": stock_code_encoded,
+        "DayOfWeek": now.weekday(),
+        "Month": now.month,
+        "Year": now.year,
+        "Lag1": lag1,
+        "Lag7": lag7,
+        "Rolling7Mean": rolling7mean
+    }])
+
+    prediction = model.predict(features)[0]
+
+    return max(0, round(prediction))
+
+# Forecast endpoint
+@app.get("/api/forecast/{stock_code}")
+def get_forecast(stock_code: str):
+    response = inventory_table.query(
+        KeyConditionExpression=Key("StockCode").eq(stock_code)
+    )
+    items = response.get("Items", [])
+
+    if not items:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    # Use total stock across warehouses as approximation
+    total_stock = sum(int(item.get("CurrentStock", 0)) for item in items)
+
+    predicted_demand = predict_demand(stock_code, total_stock)
+
+    return {
+        "success": True,
+        "data": {
+            "stockCode": stock_code,
+            "predictedDemand": predicted_demand,
+            "forecastWindowDays": 7
+        }
+    }
+
+# Reorder recommendation endpoint
+@app.get("/api/reorder/{stock_code}/{warehouse_id}")
+def get_reorder_recommendation(stock_code: str, warehouse_id: str):
+    response = inventory_table.get_item(
+        Key={
+            "StockCode": stock_code,
+            "WarehouseID": warehouse_id
+        }
+    )
+
+    item = response.get("Item")
+    if not item:
+        raise HTTPException(status_code=404, detail="Inventory item not found")
+
+    current_stock = int(item.get("CurrentStock", 0))
+    predicted_demand = predict_demand(stock_code, current_stock)
+
+    safety_stock = max(5, round(predicted_demand * 0.2))
+    recommended_reorder_qty = max(0, predicted_demand + safety_stock - current_stock)
+    low_stock_alert = current_stock < (predicted_demand + safety_stock)
+
+    return {
+        "success": True,
+        "data": {
+            "stockCode": stock_code,
+            "warehouseId": warehouse_id,
+            "currentStock": current_stock,
+            "predictedDemand": predicted_demand,
+            "safetyStock": safety_stock,
+            "recommendedReorderQty": recommended_reorder_qty,
+            "lowStockAlert": low_stock_alert
+        }
     }
