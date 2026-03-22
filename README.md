@@ -4,3 +4,4 @@
 4. Start backend:
    uvicorn main:app --reload
 5. For xgboost: pip install xgboost
+6. For sklearn: pip install scikit-learn
