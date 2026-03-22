@@ -1,9 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import boto3
 from boto3.dynamodb.conditions import Key
 from decimal import Decimal
 import json
+from pydantic import BaseModel
 
 app = FastAPI(title="Smart Inventory Management API")
 
@@ -24,6 +25,12 @@ def decimal_default(obj):
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError
+
+#For Login and Access Controls
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
 
 @app.get("/")
 def root():
@@ -61,3 +68,118 @@ def get_transactions(stock_code: str):
     )
     items = response.get("Items", [])
     return json.loads(json.dumps(items, default=decimal_default))
+
+#for the dashboard summary endpoint
+@app.get("/api/dashboard/summary")
+def get_dashboard_summary():
+    try:
+        inventory_response = inventory_table.scan()
+        inventory_items = inventory_response.get("Items", [])
+
+        transactions_response = transactions_table.scan(Select="COUNT")
+        total_transactions = transactions_response.get("Count", 0)
+
+        total_products = len(inventory_items)
+        total_stock = sum(int(item.get("CurrentStock", 0)) for item in inventory_items)
+
+        unique_warehouses = len(set(
+            item.get("WarehouseID", "") for item in inventory_items if item.get("WarehouseID")
+        ))
+
+        return {
+            "totalProducts": total_products,
+            "totalStock": total_stock,
+            "uniqueWarehouses": unique_warehouses,
+            "totalTransactions": total_transactions
+        }
+
+    except Exception as e:
+        return {"error": str(e)}
+    
+    #for transaction trend chart
+@app.get("/api/dashboard/transaction-trend")
+def get_transaction_trend():
+    try:
+        response = transactions_table.scan()
+        items = response.get("Items", [])
+
+        trend_map = {}
+
+        for item in items:
+            invoice_date = item.get("InvoiceDate", "")
+            if invoice_date:
+                period = invoice_date[:7]  # YYYY-MM
+                trend_map[period] = trend_map.get(period, 0) + 1
+
+        trend_data = [
+            {"period": period, "count": count}
+            for period, count in sorted(trend_map.items())
+        ]
+
+        return trend_data
+
+    except Exception as e:
+        return {"error": str(e)}
+
+
+#for top products
+@app.get("/api/dashboard/top-products")
+def get_top_products():
+    try:
+        response = transactions_table.scan()
+        items = response.get("Items", [])
+
+        product_map = {}
+
+        for item in items:
+            stock_code = item.get("StockCode")
+            description = item.get("Description", "Unknown")
+            quantity = int(item.get("Quantity", 0))
+
+            if stock_code not in product_map:
+                product_map[stock_code] = {
+                    "description": description,
+                    "totalQuantity": 0
+                }
+
+            product_map[stock_code]["totalQuantity"] += quantity
+
+        sorted_products = sorted(
+            product_map.items(),
+            key=lambda x: x[1]["totalQuantity"],
+            reverse=True
+        )[:5]
+
+        result = [
+            {
+                "StockCode": stock_code,
+                "Description": data["description"],
+                "totalQuantity": data["totalQuantity"]
+            }
+            for stock_code, data in sorted_products
+        ]
+
+        return result
+
+    except Exception as e:
+        return {"error": str(e)}
+    
+#For login and access control (basic implementation)
+@app.post("/api/login")
+def login(request: LoginRequest):
+    demo_user = {
+        "admin":{"password": "@dminHi12!", "role":"admin"},
+        "manager":{"password":"M@nager34^","role":"manager"},
+        "viewer":{"password":"V!ewer$67","role":"viewer"}
+    }
+
+    user = demo_user.get(request.username)
+
+    if not user or user["password"] != request.password:
+        raise HTTPException(status_code=401, detail = "Invalid username or password")
+    
+    return{
+        "message":"Login Successful",
+        "username":request.username,
+        "role":user["role"]
+    }
