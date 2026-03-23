@@ -269,7 +269,7 @@ def get_reorder_recommendation(stock_code: str, warehouse_id: str):
         "success": True,
         "data": {
             "stockCode": stock_code,
-            "warehouseId": warehouse_id,
+            "WarehouseID": warehouse_id,
             "currentStock": current_stock,
             "predictedDemand": predicted_demand,
             "safetyStock": safety_stock,
