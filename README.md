@@ -36,26 +36,21 @@ The backend is responsible for:
 
 Before running the backend, install:
 
-Python 3.9+
-pip
-AWS CLI
-Git
+- Python 3.9+
+- pip
+- AWS CLI
+- Git
 
 ### Setup Instructions
 1. Clone the Repository
 git clone <your-backend-repo-link>
 cd Smart-Inventory-Backend
-2. Create Virtual Environment (Recommended)
-Windows
-python -m venv .venv
-.venv\Scripts\activate
-Mac/Linux
-python3 -m venv .venv
-source .venv/bin/activate
-3. Install Dependencies
+2. Install Dependencies
 
-pip install fastapi uvicorn boto3 pandas joblib scikit-learn xgboost
-AWS Configuration
+* pip install fastapi uvicorn boto3 pandas joblib scikit-learn xgboost
+
+
+## AWS Configuration
 
 The backend uses boto3 to connect to DynamoDB.
 
@@ -63,7 +58,7 @@ The backend uses boto3 to connect to DynamoDB.
 
 Run:
 
-aws configure
+* aws configure
 
 Enter:
 
@@ -72,49 +67,16 @@ Enter:
 - Default region name:      "Region name"
 - Default output format:    json
 
-#### Step 2 — Verify Tables Exist
 
-Make sure these DynamoDB tables are created:
+#### Start the server:
 
-InventoryProducts
-InventoryTransactions
-
-If not, create them in AWS Console with correct keys:
-
-- InventoryProducts
-
-Partition Key: StockCode
-
-Sort Key: WarehouseID
-
-
-- InventoryTransactions
-- 
-Partition Key: StockCode
-
-Sort Key: TransactionKey
-
-#### ML Model Setup
-
-Ensure the following files exist in the project root:
-
-demand_forecast_model.pkl
-stockcode_encoder.pkl
-
-These are required for:
-
-demand forecasting
-reorder recommendation
-Running the Backend
-
-Start the server:
-
-uvicorn main:app --reload
+* uvicorn main:app --reload
 
 You should see:
 
-Uvicorn running on http://127.0.0.1:8000
-API Documentation
+* Uvicorn running on http://127.0.0.1:8000
+
+#### API Documentation
 
 FastAPI automatically generates API docs.
 
