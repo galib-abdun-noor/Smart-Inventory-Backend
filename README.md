@@ -67,9 +67,9 @@ aws configure
 
 Enter:
 
-AWS Access Key ID:        <your-access-key>
-AWS Secret Access Key:    <your-secret-key>
-Default region name:      ca-central-1
+AWS Access Key ID:        "your-access-key"
+AWS Secret Access Key:    "your-secret-key"
+Default region name:      "Region name"
 Default output format:    json
 Step 2 — Verify Tables Exist
 
