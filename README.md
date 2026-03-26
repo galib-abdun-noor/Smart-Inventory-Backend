@@ -59,7 +59,7 @@ AWS Configuration
 
 The backend uses boto3 to connect to DynamoDB.
 
-### Step 1 — Configure AWS CLI
+#### Step 1 — Configure AWS CLI
 
 Run:
 
@@ -67,15 +67,12 @@ aws configure
 
 Enter:
 
-AWS Access Key ID:        "your-access-key"
+- AWS Access Key ID:        "your-access-key"
+- AWS Secret Access Key:    "your-secret-key"
+- Default region name:      "Region name"
+- Default output format:    json
 
-AWS Secret Access Key:    "your-secret-key"
-
-Default region name:      "Region name"
-
-Default output format:    json
-
-Step 2 — Verify Tables Exist
+#### Step 2 — Verify Tables Exist
 
 Make sure these DynamoDB tables are created:
 
@@ -84,13 +81,20 @@ InventoryTransactions
 
 If not, create them in AWS Console with correct keys:
 
-InventoryProducts
+- InventoryProducts
+
 Partition Key: StockCode
+
 Sort Key: WarehouseID
-InventoryTransactions
+
+
+- InventoryTransactions
+- 
 Partition Key: StockCode
+
 Sort Key: TransactionKey
-ML Model Setup
+
+#### ML Model Setup
 
 Ensure the following files exist in the project root:
 
