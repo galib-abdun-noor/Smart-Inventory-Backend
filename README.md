@@ -32,7 +32,7 @@ The backend is responsible for:
 
 ---
 
-Prerequisites
+## Prerequisites
 
 Before running the backend, install:
 
@@ -40,7 +40,8 @@ Python 3.9+
 pip
 AWS CLI
 Git
-Setup Instructions
+
+### Setup Instructions
 1. Clone the Repository
 git clone <your-backend-repo-link>
 cd Smart-Inventory-Backend
@@ -53,18 +54,12 @@ python3 -m venv .venv
 source .venv/bin/activate
 3. Install Dependencies
 
-If requirements.txt exists:
-
-pip install -r requirements.txt
-
-Otherwise install manually:
-
 pip install fastapi uvicorn boto3 pandas joblib scikit-learn xgboost
 AWS Configuration
 
 The backend uses boto3 to connect to DynamoDB.
 
-Step 1 — Configure AWS CLI
+### Step 1 — Configure AWS CLI
 
 Run:
 
