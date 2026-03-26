@@ -41,13 +41,19 @@ Before running the backend, install:
 - AWS CLI
 - Git
 
-### Setup Instructions
+---
+
+## Setup Instructions
 1. Clone the Repository
 git clone <your-backend-repo-link>
 cd Smart-Inventory-Backend
 2. Install Dependencies
 
-* pip install fastapi uvicorn boto3 pandas joblib scikit-learn xgboost
+```
+
+pip install fastapi uvicorn boto3 pandas joblib scikit-learn xgboost
+
+```
 
 
 ## AWS Configuration
@@ -58,7 +64,11 @@ The backend uses boto3 to connect to DynamoDB.
 
 Run:
 
-* aws configure
+```
+
+aws configure
+
+```
 
 Enter:
 
@@ -70,11 +80,19 @@ Enter:
 
 #### Start the server:
 
-* uvicorn main:app --reload
+```
+
+uvicorn main:app --reload
+
+```
 
 You should see:
 
-* Uvicorn running on http://127.0.0.1:8000
+```
+
+Uvicorn running on http://127.0.0.1:8000
+
+```
 
 #### API Documentation
 
@@ -82,7 +100,11 @@ FastAPI automatically generates API docs.
 
 Open in browser:
 
-http://127.0.0.1:8000/docs
+```
+
+[Uvicorn running on http://127.0.0.1:8000](http://127.0.0.1:8000/docs)
+
+```
 
 You can test all endpoints from here.
 
