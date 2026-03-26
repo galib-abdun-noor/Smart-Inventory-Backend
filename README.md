@@ -72,10 +72,14 @@ aws configure
 
 Enter:
 
-- AWS Access Key ID:        "your-access-key"
-- AWS Secret Access Key:    "your-secret-key"
-- Default region name:      "Region name"
-- Default output format:    json
+```
+
+AWS Access Key ID:        <your-access-key>
+AWS Secret Access Key:    <your-secret-key>
+Default region name:      ca-central-1
+Default output format:    json
+
+```
 
 
 #### Start the server:
@@ -102,7 +106,7 @@ Open in browser:
 
 ```
 
-[Uvicorn running on http://127.0.0.1:8000](http://127.0.0.1:8000/docs)
+http://127.0.0.1:8000/docs
 
 ```
 
@@ -118,7 +122,6 @@ Smart-Inventory-Backend/
 ├── main.py
 ├── demand_forecast_model.pkl
 ├── stockcode_encoder.pkl
-├── requirements.txt
 └── README.md
 
 
