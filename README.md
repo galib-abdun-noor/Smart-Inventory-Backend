@@ -53,3 +53,32 @@ Smart-Inventory-Backend/
 ├── stockcode_encoder.pkl
 ├── requirements.txt
 └── README.md
+
+## Run Instructions
+
+This project consists of two parts:
+
+1. **Backend** — FastAPI + DynamoDB + ML model
+2. **Frontend** — Angular application
+
+To run the full system locally, start the backend first, then the frontend.
+
+---
+
+## Prerequisites
+
+Make sure the following are installed:
+
+- Python 3.9+
+- Node.js and npm
+- AWS CLI
+- Git
+
+---
+
+## 1. Clone the Repositories
+
+### Backend
+```bash
+git clone <backend-repo-link>
+cd Smart-Inventory-Backend
