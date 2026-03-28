@@ -2,7 +2,7 @@
 
 This repository contains the **backend service** for the Smart Inventory Management System.  
 It is built using **FastAPI**, connects to **AWS DynamoDB**, and integrates a **machine learning model** to provide demand forecasting and reorder recommendations.
-[Recording-20260326_181634.webm](https://github.com/user-attachments/assets/0b4c3378-6680-49b0-8f1a-6f66c62e5676)
+https://github.com/user-attachments/assets/0b4c3378-6680-49b0-8f1a-6f66c62e5676
 
 ---
 
