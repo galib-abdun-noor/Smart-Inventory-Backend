@@ -121,9 +121,13 @@ You can test all endpoints from here.
 ```text
 Smart-Inventory-Backend/
 │
+├── notebooks/
+│   ├── data_cleaning_and_generation.ipynb
+│   ├── ml_model_training.ipynb
+│
 ├── main.py
 ├── demand_forecast_model.pkl
 ├── stockcode_encoder.pkl
-└── README.md
+├── README.md
 
 
