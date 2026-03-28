@@ -1,7 +1,7 @@
 # Smart Inventory Management System — Backend
 
 This repository contains the **backend service** for the Smart Inventory Management System.  
-It is built using **FastAPI**, connects to **AWS DynamoDB**, and integrates a **machine learning model** to provide demand forecasting and reorder recommendations. Here is the link for the [frontend]([https://docs.github.com](https://github.com/JayashreeJanani/inventory-frontend))
+It is built using **FastAPI**, connects to **AWS DynamoDB**, and integrates a **machine learning model** to provide demand forecasting and reorder recommendations. Here is the link for the [frontend]([https://docs.github.com](https://github.com/JayashreeJanani/inventory-frontend)
 
 https://github.com/user-attachments/assets/0b4c3378-6680-49b0-8f1a-6f66c62e5676
 
